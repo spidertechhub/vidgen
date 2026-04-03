@@ -109,10 +109,18 @@ def render_video():
     output_path = os.path.join(UPLOAD_DIR, output_filename)
     
     # 1. DOWNLOAD AUDIO
-    ydl_opts = {
-        'format': 'bestaudio/best',
+ydl_opts = {
+        # Force it to look for universally readable m4a/mp4 formats first
+        'format': 'bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio/best',
         'outtmpl': audio_path.replace('.mp3', '.%(ext)s'),
-        'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}],
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        # Ignore minor errors that usually crash the post-processor
+        'ignoreerrors': True,
+        'noplaylist': True,
         'quiet': True
     }
     try:
